@@ -1,85 +1,60 @@
 
 
 
-import numpy as np
+# S=x^0 + x + x^2 + x^3 + x^4 + ... + x^N
 
 
-def dist(x1, x2):
-    diff = x1 - x2
-    return np.sqrt(np.matmul(diff, diff.transpose()))
+# (x^2 + x + 1) = x^3 - 1 / (x - 1)
 
-#X: no_samples x no_features
-def kmeans(X, K, max_no_iter):
-    #initialize centers 
-    centers = [X[k] for k in K]
+# x^(N+1) - 1
 
-    no_samples, no_feature = X.shape
-
-    y_pred = [0 for i in range(no_samples)]
-    
-    iter_cnt = 0
-    while iter_cnt < max_no_iter:
-        #Assignments
-        for i in range(no_samples):
-            x = X[i]
-
-            y_pred[i] = np.argmin([dist(x, centers[k]) for k in K])
-
-        #Recalculate the centers
-        centers = [np.zeros_like(X[0]) for k in range(K)]
-        total_no = [0 for k in range(K)]
-        for i in range(no_samples):
-            center[y_pred[i]] += X[i]
-            total_no[y_pred[i]] += 1
-
-        center = [center[i]/total_no[i] for i in range(K)]
-
-        iter_cnt += 1
-
-    return centers
+#x^4 = x^2 * x^2
+#x^6 = x^4 * x^2
+#
 
 
 
 
 
+def power(x, N):
+    if N < 1:
+        return 1
+
+    if N%2 == 0:
+        return power(x*x, N/2)
+    else:
+        return power(x*x, (N-1)/2)*x
+
+def func1(x, N):
+    if x == 1:
+        return N+1
+    return (power(x, (N+1)) - 1) / (x - 1)
 
 
 
+def func2(x, N):
+    # N > 1
 
-def merge_sorted(l1, l2):
-    ptr1 = 0
-    ptr2 = 0
+    #init s = 1
+    s = 1
 
-    out = []
-    while ptr1 < len(l1) or ptr2 < len(l2):
-        num1 = l1[ptr1]
-        num2 = l2[ptr2]
+    #init interval = 1
+    midval = 1
 
-        if num1 < num2:
-            out.append(num1)
-            ptr1 += 1
-        else:
-            out.append(num2)
-            ptr2 += 1
+    #loop from 1 to N
+    for i in range(1, N+1):
+        #interval *= x
+        midval = midval * x
 
-    while ptr1 < len(l1):
-        out.append(l1[ptr1])
-        ptr1 += 1
+        #Update sum
+        s += midval
 
-    while ptr2 < len(l2):
-        out.append(l2[ptr2])
-        ptr2 += 1
+    return s
 
-    return out
+#print(power(3,3))
 
-def mergesort(arr):
-    arr_leaf = [[a] for a in arr]
 
-    while len(arr_leaf)>1:
-        i = 0
-        while i < len(arr_leaf)-1:
-            merged = merge_sorted(arr_leaf[i], arr_leaf[i+1]) 
-            arr_leaf = arr_leaf[:i] + [merged] + arr_leaf[i+2:]
-            i += 1
+x = 3
+N = 3
 
-    return arr_leaf[0]
+print(func1(x, N))
